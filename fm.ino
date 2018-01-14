@@ -10,12 +10,30 @@ float dist_pl;
 int angle = 0;
 float angle_pl;
 
+String lefthead="mov left=";
+String righthead="mov right=";
+String huiche="\n";
+float Throttle=0;
+float Steering=0;
+
+char ad1[13] = "";
+char ad2[13] = "";
+
+char* int2str(char *str, int i)
+{
+  sprintf(str,"%d",i);
+  return str;
+}
+
 void setup() 
 {
   // put your setup code here, to run once:
   Serial2.begin(115200);
   Serial.begin(115200); //for debug
+  Serial3.begin(115200); //for motor
   //Serial2.setTimeout(200);
+
+  Serial3.println("cfg ratio=2"); //电机响应速度
 }
 
 void loop() 
@@ -63,7 +81,19 @@ void loop()
       }
   }
   
-  Serial.println(dist_pl);
+  //Serial.println(angle_pl);
+  Throttle = 150*(dist_pl - 1);
+  Steering = 1.1*angle_pl;
+
+  if(Throttle < 1.0) Throttle = 0;
+  
+
+  dtostrf(Throttle-Steering,1,2,ad1);
+  dtostrf(Throttle+Steering,1,2,ad2);
+
+  Serial3.println(lefthead+ad1);
+  Serial3.println(righthead+ad2);
+  
   delay(200);
 
 }
